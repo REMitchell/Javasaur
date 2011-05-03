@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
 
 
-	$sql = "INSERT INTO animations (eid, pid, name, actionTrigger, triggerID, animationType, duration, attribute1, attribute2) VALUES (".$params['elemID'].", ".$params['projectID'].", '".$params['title']."', '".$params['postOrPre']."', ".$params['triggerID'].", '".$params['animationType']."', ".$params['time'].", '".$params['attribute1']."', '".$params['attribute2']."')";
+	$sql = "INSERT INTO animations (eid, pid, name, actionTrigger, triggerID, animationType, duration, attribute1, attribute2) VALUES (".$params['elemID'].", ".$_GET['pid'].", '".$params['title']."', '".$params['postOrPre']."', '".$params['triggerID']."', '".$params['animationType']."', '".$params['time']."', '".$params['attribute1']."', '".$params['attribute2']."')";
 print $sql;
 mysql_query($sql);
 
