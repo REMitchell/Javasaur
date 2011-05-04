@@ -7562,52 +7562,6 @@ this.rasterExport = function() {
 	call("exported", {svg: str, issues: issues});
 };
 
-
-//Written by REM 
-// Function: rasterExport
-// Generates a PNG Data URL based on the current image, then calls "exported" 
-// with an object including the string and any issues found
-this.rasterExportSelected = function() {
-	// remove the selected outline before serializing
-	//clearSelection();
-	
-	// Check for known CanVG issues 
-	var issues = [];
-	
-	// Selector and notice
-	var issue_list = {
-		'feGaussianBlur': uiStrings.exportNoBlur,
-		'image': uiStrings.exportNoImage,
-		'foreignObject': uiStrings.exportNoforeignObject,
-		'[stroke-dasharray]': uiStrings.exportNoDashArray
-	};
-	var content = $(svgcontent);
-	
-	// Add font/text check if Canvas Text API is not implemented
-	if(!("font" in $('<canvas>')[0].getContext('2d'))) {
-		issue_list['text'] = uiStrings.exportNoText;
-	}
-	//If any issues are found in any of the elements on the canvas
-	$.each(issue_list, function(sel, descr) {
-		if(content.find(sel).length) {
-			issues.push(descr);
-		}
-	});
-	//selectedElements
-	//var svgToString = this.svgToString = function(selectedElements[0], indent) {
-	var str = svgToString(selectedElements[0]);
-	alert(str);
-	call("exportSelected", {svg: str, issues: issues});
-};
-
-
-
-
-
-
-
-
-
 // Function: getSvgString
 // Returns the current drawing as raw SVG XML text.
 //
