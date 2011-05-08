@@ -155,6 +155,7 @@
 			}
 			if(opts.pngsave) {
 				svgCanvas.bind("exported", opts.pngsave);
+				svgCanvas.bind("exportSelected", opts.pngsave);
 			}
 			customHandlers = opts;
 			
@@ -576,6 +577,43 @@
 					exportWindow.alert(note);
 				}
 			};
+			//Written by REM 
+			//Function: exportSelectedHandler. 
+			//This function uses the saveSVG page to commit SVG elements to the database, and prompt users
+			//To name the SVG elements
+			var exportSelectedHandler = function(window, data) {
+				alert("data is "+data);
+				var issues = data.issues;
+				
+				if(!$('#export_canvas').length) {
+					$('<canvas>', {id: 'export_canvas'}).hide().appendTo('body');
+				}
+				var c = $('#export_canvas')[0];
+				
+				c.width = svgCanvas.contentW;
+				c.height = svgCanvas.contentH;
+				canvg(c, data.svg);
+				var datauri = c.toDataURL('image/png');
+				//$svgArray = explode(';;', $_POST['svgArray']);
+				
+				exportWindow.location.href = "saveSVG.php?svgArray="+datauri;
+				
+				var done = $.pref('export_notice_done');
+				if(done !== "all") {
+					var note = uiStrings.saveFromBrowser.replace('%s', 'PNG');
+					
+					// Check if there's issues
+					if(issues.length) {
+						var pre = "\n \u2022 ";
+						note += ("\n\n" + uiStrings.noteTheseIssues + pre + issues.join(pre));
+					} 
+					
+					// Note that this will also prevent the notice even though new issues may appear later.
+					// May want to find a way to deal with that without annoying the user
+					$.pref('export_notice_done', 'all'); 
+					exportWindow.alert(note);
+				}
+			};			
 			
 			// called when we've selected a different element
 			var selectedChanged = function(window,elems) {
@@ -1341,6 +1379,7 @@
 			svgCanvas.bind("changed", elementChanged);
 			svgCanvas.bind("saved", saveHandler);
 			svgCanvas.bind("exported", exportHandler);
+			svgCanvas.bind("exportSelected", exportSelectedHandler);
 			svgCanvas.bind("zoomed", zoomChanged);
 			svgCanvas.bind("extension_added", extAdded);
 			svgCanvas.textActions.setInputElem($("#text")[0]);
@@ -1404,6 +1443,7 @@
 				$('#tool_reorient').toggleClass('disabled', ctl.value == 0);
 			}
 			var changeZoom = function(ctl) {
+				alert("change zoom!");
 				var zoomlevel = ctl.value / 100;
 				var zoom = svgCanvas.getZoom();
 				var w_area = workarea;
@@ -1971,6 +2011,24 @@
 			};
 		
 			var clickZoom = function(){
+				//MODIFIED BY REM 
+				// Open placeholder window (prevents popup)
+				if(!customHandlers.pngsave)  {
+					var str = uiStrings.loadingImage;
+					exportWindow = window.open("data:text/html;charset=utf-8,<title>" + str + "<\/title><h1>" + str + "<\/h1>");
+				}
+
+				if(window.canvg) {
+					svgCanvas.rasterExportSelected();
+				} else {
+					$.getScript('canvg/rgbcolor.js', function() {
+						$.getScript('canvg/canvg.js', function() {
+							svgCanvas.rasterExportSelected();
+						});
+					});
+				}
+				
+				
 				if (toolButtonClick('#tool_zoom')) {
 					workarea.css('cursor','crosshair');
 					svgCanvas.setMode('zoom');

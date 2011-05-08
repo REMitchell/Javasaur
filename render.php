@@ -1,3 +1,9 @@
+<!--
+Created by Ryan Mitchell 2011
+At Olin College of Engineering
+Creative Commons, non-commercial, share-alike
+-->
+
 <HTML>
 <HEAD>
 <TITLE>Render Animations</TITLE>
@@ -67,7 +73,7 @@ foreach($allAnimationsList as $animation){
 
 
 print "<h2>Copy and paste the following code into your website:</h2>";
-print "<div style=\"width:600px;height:400px;overflow:auto;\">";
+print "<div style=\"width:600px;height:400px;overflow:auto;\" contentEditable=True>";
 print htmlspecialchars("<script type=\"text/javascript\">")."<p>";
 foreach($renderedAfters as $after){
 	print $after."<br>";
@@ -208,7 +214,7 @@ function createImage($svg){
 
 function aidToEid($animation){
 	$sql = "SELECT elements.name FROM elements, animations WHERE elements.eid =".$animation['eid']."  AND animations.eid = elements.eid";
-
+	//print "Query is : ".$sql;
 	$result = mysql_query($sql);
 	$eidArray = mysql_fetch_assoc($result);
 	return str_replace(" ", "", $eidArray['name']);
